@@ -428,8 +428,14 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.fadeOut(900, 0, 0, 0);
     this.cameras.main.once('camerafadeoutcomplete', () => {
       this.scene.stop('HUD');
-      this.scene.start('StageIntro', {
-        zoneIndex: next, score: this.score, lives: this.lives, continues: this.continues,
+      // Educational inter-scene screen for the stage just cleared, then on
+      // to the next stage's intro.
+      this.scene.start('Story', {
+        zoneIndex: this.zoneIndex,
+        next: {
+          scene: 'StageIntro',
+          data: { zoneIndex: next, score: this.score, lives: this.lives, continues: this.continues },
+        },
       });
     });
   }
@@ -438,12 +444,21 @@ export default class GameScene extends Phaser.Scene {
     this.ending = true;
     midiPlayer.stop();
     this.scene.stop('HUD');
-    this.scene.start('GameOver', {
+    const data = {
       win,
       score: this.score,
       zoneIndex: this.zoneIndex,
       bestCombo: this.combat.bestCombo,
-    });
+    };
+    if (win) {
+      // Final stage cleared — show the PolyU story screen before the results.
+      this.scene.start('Story', {
+        zoneIndex: this.zoneIndex,
+        next: { scene: 'GameOver', data },
+      });
+    } else {
+      this.scene.start('GameOver', data);
+    }
   }
 
   saveCheckpoint() {

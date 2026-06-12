@@ -30,7 +30,9 @@ const intro1 = await page.evaluate(() => ({
 }));
 console.log('stage intro:', JSON.stringify(intro1));
 await page.screenshot({ path: 'smoke-intro.png' });
-await page.keyboard.press('Enter'); // skip into the stage
+await page.keyboard.press('Enter'); // fast-forward the caption typewriter
+await page.waitForTimeout(400);
+await page.keyboard.press('Enter'); // press-any-key prompt → start the stage
 await page.waitForTimeout(900);
 
 // --- Phase A: walk into wave 1 and fight for real ---
@@ -135,11 +137,20 @@ const phases = await page.evaluate(async () => {
 });
 console.log('boss phases:', JSON.stringify(phases));
 
-await page.waitForTimeout(3500); // K.O. -> victory transition
+await page.waitForTimeout(3500); // K.O. -> story screen transition
+const story = await page.evaluate(() => ({
+  scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
+}));
+console.log('story screen:', JSON.stringify(story));
+await page.keyboard.press('Enter'); // fast-forward the typewriter
+await page.waitForTimeout(600);
+await page.screenshot({ path: 'smoke-story.png' });
+await page.keyboard.press('Enter'); // continue → results
+await page.waitForTimeout(1200);
 const end = await page.evaluate(() => ({
   scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
 }));
-console.log('after boss death:', JSON.stringify(end));
+console.log('after story:', JSON.stringify(end));
 await page.screenshot({ path: 'smoke-end.png' });
 
 if (errors.length) {

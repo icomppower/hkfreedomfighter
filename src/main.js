@@ -5,6 +5,7 @@ import StageIntroScene from './scenes/StageIntroScene.js';
 import GameScene from './scenes/GameScene.js';
 import HUDScene from './scenes/HUDScene.js';
 import BossIntroScene from './scenes/BossIntroScene.js';
+import StoryScene from './scenes/StoryScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
 
 const config = {
@@ -29,7 +30,7 @@ const config = {
     activePointers: 4, // multi-touch: d-pad + buttons simultaneously
   },
   scene: [BootScene, MenuScene, StageIntroScene, GameScene, HUDScene,
-    BossIntroScene, GameOverScene],
+    BossIntroScene, StoryScene, GameOverScene],
 };
 
 window.addEventListener('load', () => {
