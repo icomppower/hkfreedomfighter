@@ -1,0 +1,21 @@
+{
+  "name": "hk-freedom-fighter",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "香港自由戰士 HK FREEDOM FIGHTER — a 2019 Hong Kong protest themed side-scrolling beat-em-up built with Phaser 3",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:smoke": "node smoke-test.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.60.0",
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "@tonejs/midi": "^2.0.28",
+    "tone": "^15.1.22"
+  }
+}
