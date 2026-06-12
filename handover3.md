@@ -1,16 +1,58 @@
-# Handover — 香港自由戰士 HK Freedom Fighter ✊
+# Handover 3 — 香港自由戰士 HK Freedom Fighter ✊
 
 **Date:** 2026-06-11
+**Repo:** https://github.com/icomppower/hkfreedomfighter
+**Live:** https://hk-freedom-fighter.vercel.app
 **Base game:** 旺角拳王 Mong Kok Brawler — https://github.com/icomppower/HongKongfighter
-**This repo:** https://github.com/icomppower/hkfreedomfighter
 **Reskin GDD:** https://app.notion.com/p/37d1f269eaea8102acb9f335c435cae3
-**Stack:** Phaser 3.60 (CDN) · Vite · Vanilla JS · Vercel
+**Stack:** Phaser 3.60 (CDN) · Vite · Vanilla JS · Vercel (auto-deploy on push to `main`)
+
+Continues from `handover2.md` (base-game history). This document covers the
+reskin session: project creation, full retheme, first deploy, mobile audio fix.
 
 This is a pure **reskin** of the base game per the GDD. Combat, move list,
 weapon mechanics, scoring, wave layouts, boss AI and HP values are all
 **unchanged** — internal config keys (`goon`, `enforcer`, `dragon`, `pirate`,
 `queen`, `shadow`, `chopper`, `bottle`, `bun`, `keung_*` texture keys, etc.)
 were deliberately kept so the diff against the base stays mechanical.
+
+## What was done this session
+
+### Commit `242ebe9` — "feat: HK Freedom Fighter — 2019 HK protest reskin of Mong Kok Brawler"
+
+- Copied `/Users/johnny/claude/hk-brawler` → `/Users/johnny/claude/hkfreedomfighter`
+  (rsync, excluding node_modules / .git / dist), removed the copied `.vercel/`
+  so deploys couldn't hit the base game's Vercel project.
+- Applied the full retheme (file-by-file list below).
+- Verified with build + headless smoke test: zone `admiralty`, all 4 boss
+  phases, victory flow, zero console errors.
+- Pushed to new repo `icomppower/hkfreedomfighter`.
+
+### Commit `65a6dd1` — "fix: music not playing on mobile — retry audio unlock on touchend"
+
+**Symptom:** music fine on desktop, silent on phones.
+**Cause:** iOS Safari only grants the WebAudio unlock on **touchend/click**,
+not touchstart — and Phaser's `pointerdown` is backed by touchstart. So
+`Tone.start()` failed silently, and `MidiPlayer._started = true` blocked any
+retry → permanent silence on mobile.
+**Fix:**
+- `src/systems/MidiPlayer.js` — `play()` now awaits `_unlock()`, which
+  retries `Tone.start()` on `touchend`/`pointerup`/`mousedown`/`keydown`
+  until `Tone.getContext().state === 'running'`, then removes the listeners.
+- `src/systems/Sfx.js` — `ensure()` hardened the same way (`ctx.resume()`
+  retried across gestures, one-time hook).
+
+**Caveat:** the iPhone hardware **silent switch** mutes WebAudio at the OS
+level — that cannot be fixed in code.
+
+### Deploy
+
+- `vercel link --yes --project hk-freedom-fighter --scope team_kT43LPQn6r3AdpyrMkByGvTR`
+  (also auto-connected the GitHub repo → push-to-main auto-deploys).
+- `vercel deploy --prod` → aliased to **https://hk-freedom-fighter.vercel.app**.
+- Notion GDD version log updated through v0.4.1 (verified by re-fetch —
+  Notion's auto-linking of bare filenames can silently break
+  `old_str` matches in update-page; always re-fetch to confirm).
 
 ## Theme mapping (internal key → displayed identity)
 
@@ -45,7 +87,7 @@ were deliberately kept so the diff against the base stays mechanical.
 | 4 | 理工大學 PolyU Siege | `polyu` | Burning barricades, smoke columns, brick arches, embers |
 
 Wave layouts/trigger Xs are identical to the base game; only the four
-background generator functions were rewritten (texture keys renamed
+background generator functions were rewritten (texture keys
 `<bg>_far/_mid/_near/_ground`, referenced from MenuScene + GameOverScene too).
 
 ## What changed in this reskin (file by file)
@@ -62,8 +104,9 @@ background generator functions were rewritten (texture keys renamed
   yellow `#FFD700` palette, admiralty backdrop
 - `src/scenes/HUDScene.js` — 龍仔 DRAGON label, yellow accents
 - `src/scenes/GameOverScene.js` — "VICTORY — GLORY TO HONG KONG", backdrop
+- `src/systems/MidiPlayer.js` + `src/systems/Sfx.js` — mobile audio unlock (v0.4.1)
 - `src/entities/*.js` — header comments + summon popTexts re-themed
-- `index.html`, `package.json`, `README.md` — titles/descriptions
+- `index.html`, `package.json`, `README.md`, `GAME_DESIGN.md` — titles/descriptions
 
 ## UI palette (GDD-locked)
 
@@ -72,8 +115,8 @@ danger `#FF3333` · panels pulse yellow.
 
 ## Music
 
-Unchanged: 願榮光歸香港 Glory to Hong Kong — `public/audio/glory_to_hk.mid`,
-played by `src/systems/MidiPlayer.js`.
+Unchanged track: 願榮光歸香港 Glory to Hong Kong — `public/audio/glory_to_hk.mid`,
+played by `src/systems/MidiPlayer.js` (Tone.js PolySynth + @tonejs/midi).
 
 ## Dev commands
 
@@ -81,11 +124,15 @@ played by `src/systems/MidiPlayer.js`.
 npm install
 npm run dev          # http://localhost:3000
 npm run build        # → dist/
-npm run preview -- --port 4173 &
-node smoke-test.mjs  # headless screenshot tests (requires Chrome)
+npm run preview -- --port 4173 &   # use --strictPort to avoid a stale-server trap
+node smoke-test.mjs  # headless screenshot tests (requires Chrome; hits :4173)
 ```
 
-## Known gaps (inherited from base, see base handover2.md)
+Deploy is automatic: `git push origin main` → Vercel production.
 
-- iOS Safari context menu, mouse-facing, mouse special, weapon balance,
-  boss difficulty tuning — all unchanged from base.
+## Known gaps / next tasks
+
+- Mobile music fix is deployed but verified headless only — worth a quick
+  hands-on check on a real iPhone (remember the silent switch caveat).
+- Inherited from base (see `handover2.md`): iOS Safari context menu,
+  mouse-facing, mouse special, weapon balance, boss difficulty tuning.

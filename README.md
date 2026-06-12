@@ -7,7 +7,7 @@ external asset files (the only file asset is the menu music MIDI).
 
 This is a **reskin** of [旺角拳王 Mong Kok Brawler](https://github.com/icomppower/HongKongfighter):
 all mechanics, the move list, weapons behaviour and scoring are inherited
-unchanged. Only the theme changes — see `HANDOVER.md` for the mapping.
+unchanged. Only the theme changes — see `handover3.md` for the mapping.
 
 Fight as **龍仔 Dragon** — black protest gear, yellow hard hat, goggles and
 mask — through four stages of the movement: 金鐘 Admiralty, 立法會 LegCo,
