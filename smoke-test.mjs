@@ -22,9 +22,28 @@ console.log('boot:', JSON.stringify(await page.evaluate(() => ({
   anims: window.__game.anims.anims.size,
 }))));
 
-// --- Stage intro cutscene ---
+// --- Opening cutscene (prelude) ---
 await page.keyboard.press('z');
 await page.waitForTimeout(900);
+const prelude = await page.evaluate(() => ({
+  scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
+}));
+console.log('prelude:', JSON.stringify(prelude));
+await page.keyboard.press('Enter'); // finish panel 1 typing
+await page.waitForTimeout(300);
+await page.screenshot({ path: 'smoke-prelude.png' });
+
+// click through the remaining panels until the stage intro appears
+for (let i = 0; i < 16; i++) {
+  const key = await page.evaluate(() => window.__game.scene.scenes
+    .filter((s) => s.scene.isActive()).map((s) => s.scene.key)[0]);
+  if (key === 'StageIntro') break;
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(250);
+}
+
+// --- Stage intro cutscene ---
+await page.waitForTimeout(700);
 const intro1 = await page.evaluate(() => ({
   scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
 }));

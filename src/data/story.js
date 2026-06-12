@@ -3,6 +3,42 @@
 // Chinese below; each ends with a closing tribute line rendered in italics.
 // Indexed by zoneIndex (matches ZONES in levels.js).
 
+// Opening cutscene — 龍仔 Dragon origin. Six panels on a black screen,
+// each holds a beat before the next; dir is the stage direction shown as a
+// faint script line above the dialogue. English first, Cantonese below.
+export const PRELUDE = [
+  {
+    dir: 'A city skyline at night. Neon lights reflected on wet streets.',
+    en: 'I am nobody special.',
+    zh: '我唔係咩大人物。',
+  },
+  {
+    dir: 'A crowd of people holding umbrellas in the rain.',
+    en: 'I went to the marches like everyone else.\nI believed if enough of us showed up, they would listen.',
+    zh: '我同大家一齊遊行。\n我相信，只要人夠多，佢哋會聆聽。',
+  },
+  {
+    dir: 'Tear gas canisters rolling across the ground. People running.',
+    en: "They didn't listen.",
+    zh: '佢哋冇聆聽。',
+  },
+  {
+    dir: 'A young person on the ground. Others pulling them to safety.',
+    en: 'I watched them take our neighbours.\nOur friends. Our children.',
+    zh: '我眼睜睜睇住佢哋帶走我哋嘅街坊。\n我哋嘅朋友。我哋嘅孩子。',
+  },
+  {
+    dir: "Dragon's hands picking up a yellow hard hat.",
+    en: 'There is a moment when you stop asking for permission to be free.',
+    zh: '有一刻，你會唔再請求自由，而係選擇站起來。',
+  },
+  {
+    dir: 'Dragon puts on the hard hat. Goggles. Mask. Faces forward.',
+    en: "I am nobody.\nBut nobody is going to stand up if I don't.",
+    zh: '我係無名小卒。\n但如果我唔企出嚟，就冇人會。',
+  },
+];
+
 export const STORY = [
   {
     // After Stage 1 — 金鐘 Admiralty
