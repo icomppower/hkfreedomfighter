@@ -4,6 +4,7 @@
 import { GAME_W, GAME_H, STORAGE } from '../constants.js';
 import { ZONES } from '../data/levels.js';
 import { Sfx } from '../systems/Sfx.js';
+import { midiPlayer } from '../systems/MidiPlayer.js';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -20,6 +21,8 @@ export default class GameOverScene extends Phaser.Scene {
   }
 
   create() {
+    midiPlayer.stop();
+
     this.add.tileSprite(0, 0, GAME_W, GAME_H, 'admiralty_far').setOrigin(0).setAlpha(0.5);
     this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0a0a0a, 0.7).setOrigin(0);
 

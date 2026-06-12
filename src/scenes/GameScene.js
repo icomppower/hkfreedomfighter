@@ -33,6 +33,10 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    // No-op if already playing; restarts the music after a continue or
+    // restart, which never passes through MenuScene's start hooks.
+    midiPlayer.play();
+
     const zone = this.zone;
     this.physics.world.setBounds(0, 0, zone.width, GAME_H);
     this.cameras.main.setBounds(0, 0, zone.width, GAME_H);
@@ -442,7 +446,8 @@ export default class GameScene extends Phaser.Scene {
 
   gameOver(win) {
     this.ending = true;
-    midiPlayer.stop();
+    // Music keeps playing through the final story screen; GameOverScene
+    // stops it when the results actually appear.
     this.scene.stop('HUD');
     const data = {
       win,
