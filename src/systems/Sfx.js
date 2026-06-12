@@ -12,7 +12,22 @@ class SfxEngine {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (AC) this.ctx = new AC();
     }
-    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+      // iOS Safari only honours resume() from touchend/click, not touchstart —
+      // keep retrying on gestures until the context actually runs.
+      if (!this._unlockHooked) {
+        this._unlockHooked = true;
+        const events = ['touchend', 'pointerup', 'mousedown', 'keydown'];
+        const retry = () => {
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          if (this.ctx.state === 'running') {
+            events.forEach((e) => document.removeEventListener(e, retry));
+          }
+        };
+        events.forEach((e) => document.addEventListener(e, retry));
+      }
+    }
   }
 
   tone({ f0 = 220, f1 = 110, dur = 0.1, type = 'square', vol = 0.15, delay = 0 }) {

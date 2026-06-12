@@ -18,7 +18,7 @@ export class MidiPlayer {
     if (this._started) return;
     this._started = true;
 
-    await Tone.start();
+    await this._unlock();
 
     const res  = await fetch('/audio/glory_to_hk.mid');
     const buf  = await res.arrayBuffer();
@@ -47,6 +47,27 @@ export class MidiPlayer {
     Tone.Transport.loop    = true;
     Tone.Transport.loopEnd = midi.duration;
     Tone.Transport.start();
+  }
+
+  // Resolve once the audio context is actually running. iOS Safari only
+  // grants the audio unlock on touchend/click (not touchstart), so a single
+  // Tone.start() inside pointerdown can fail silently on mobile — keep
+  // retrying on subsequent gestures until the context runs.
+  _unlock() {
+    if (Tone.getContext().state === 'running') return Tone.start();
+    return new Promise((resolve) => {
+      const events = ['touchend', 'pointerup', 'mousedown', 'keydown'];
+      const tryStart = () => {
+        Tone.start().then(() => {
+          if (Tone.getContext().state === 'running') {
+            events.forEach((e) => document.removeEventListener(e, tryStart));
+            resolve();
+          }
+        });
+      };
+      events.forEach((e) => document.addEventListener(e, tryStart));
+      tryStart();
+    });
   }
 
   stop() {
