@@ -122,9 +122,9 @@ export default class MenuScene extends Phaser.Scene {
   startGame() {
     Sfx.ensure();
     Sfx.play('select');
-    // Fresh game opens with the Dragon-origin cutscene; checkpoint
-    // continues (GameOverScene) still go straight to StageIntro.
-    this.scene.start('Prelude', {
+    // Fresh game goes through character select, then the Dragon-origin
+    // cutscene; checkpoint continues (GameOverScene) skip straight to StageIntro.
+    this.scene.start('CharSelect', {
       zoneIndex: 0, score: 0, lives: 3, continues: 0, fresh: true,
     });
   }

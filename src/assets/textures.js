@@ -70,6 +70,25 @@ export function drawFighter(ctx, p, pal) {
     ctx.shadowBlur = 12;
   }
 
+  // Ponytail (小美 Amy): a dark tail gathered at the back of the helmet, drawn
+  // before the body so it sits behind the shoulder. A clear feminine read at
+  // sprite scale. Flips with the sprite, so it always trails from the back.
+  if (pal.ponytail) {
+    ctx.strokeStyle = pal.ponytail;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 4.6;
+    ctx.beginPath();
+    ctx.moveTo(hdx - 4, hdy - 3.5);
+    ctx.quadraticCurveTo(hdx - 10, hdy + 1, hdx - 8, hdy + 10);
+    ctx.stroke();
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(hdx - 8, hdy + 8.5);
+    ctx.quadraticCurveTo(hdx - 8.6, hdy + 13, hdx - 6.4, hdy + 16);
+    ctx.stroke();
+  }
+
   // back leg + shoe
   limbSeg(ctx, hx - 1, hy, p.bf[0], p.bf[1], 3, 5, pal.pantsDark || pal.pants);
   ctx.fillStyle = pal.shoes;
@@ -98,6 +117,24 @@ export function drawFighter(ctx, p, pal) {
     ctx.beginPath();
     ctx.arc(shx, shy + 5, 4.5, 0.15 * Math.PI, 0.85 * Math.PI);
     ctx.stroke();
+  }
+  // press-corps kit (小美 Amy): a yellow PRESS badge high on the vest and a
+  // small black camera slung over the chest. Cosmetic, drawn onto the torso.
+  if (pal.press) {
+    ctx.fillStyle = pal.press;
+    ctx.fillRect(shx - 4, shy + 2, 5, 3.2);
+  }
+  if (pal.camera) {
+    ctx.fillStyle = '#0d0d0d';
+    ctx.fillRect(shx - 4.5, shy + 7, 9, 5.5);
+    ctx.fillStyle = '#5a5a5a';
+    ctx.beginPath();
+    ctx.arc(shx, shy + 9.8, 1.9, 0, PI2);
+    ctx.fill();
+    ctx.fillStyle = '#9fe8ff';
+    ctx.beginPath();
+    ctx.arc(shx, shy + 9.8, 0.9, 0, PI2);
+    ctx.fill();
   }
   // front leg + shoe
   limbSeg(ctx, hx + 1, hy, p.ff[0], p.ff[1], -3, 5, pal.pants);

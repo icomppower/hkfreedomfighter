@@ -21,9 +21,13 @@ const TAP_WINDOW = 280;   // ms window for double-tap run
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, opts = {}) {
-    super(scene, x, GROUND_Y, 'keung_idle', 0);
+    super(scene, x, GROUND_Y, `${opts.char || 'keung'}_idle`, 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
+
+    // Cosmetic skin: texture/anim key prefix (`keung`=龍仔 Dragon,
+    // `amy`=小美 Amy). Stats and moves are identical across skins.
+    this.tex = opts.char || 'keung';
 
     this.setOrigin(0.5, 1);
     this.setScale(CHAR_SCALE);
@@ -122,7 +126,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       scene.input.off('pointerdown', this.pointerHandler);
     });
 
-    this.play('keung-idle');
+    this.play(`${this.tex}-idle`);
   }
 
   // Latch buffered presses for this frame and clear the buffer.
@@ -208,9 +212,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       case 'down':
         if (time >= this.downUntil) {
           this.setState_('getup');
-          this.play('keung-getup');
+          this.play(`${this.tex}-getup`);
           this.invulnUntil = time + 900;
-          this.once('animationcomplete-keung-getup', () => {
+          this.once(`animationcomplete-${this.tex}-getup`, () => {
             if (this.state === 'getup') this.setState_('idle');
           });
         }
@@ -266,13 +270,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (this.isDead) {
       this.setVelocityX(0);
-      this.play('keung-down');
+      this.play(`${this.tex}-down`);
       return;
     }
     if (this.state === 'fall') {
       this.setVelocityX(0);
       this.setState_('down');
-      this.play('keung-down');
+      this.play(`${this.tex}-down`);
       this.downUntil = time + 650;
       return;
     }
@@ -308,7 +312,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(0);
       if (this.state !== 'crouch') {
         this.state = 'crouch';
-        this.play('keung-crouch', true);
+        this.play(`${this.tex}-crouch`, true);
         this.body.setSize(22, 36);
         this.body.setOffset(13, 28);
       }
@@ -324,13 +328,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(dir * speed);
       if (this.onGround) {
         this.state = this.running ? 'run' : 'walk';
-        this.play(this.running ? 'keung-run' : 'keung-walk', true);
+        this.play(this.running ? `${this.tex}-run` : `${this.tex}-walk`, true);
       }
     } else {
       this.setVelocityX(0);
       if (this.onGround) {
         this.state = 'idle';
-        this.play('keung-idle', true);
+        this.play(`${this.tex}-idle`, true);
       }
     }
 
@@ -340,19 +344,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.jumps = 1;
         this.onGround = false;
         Sfx.play('jump');
-        this.play('keung-jump', true);
+        this.play(`${this.tex}-jump`, true);
       } else if (this.jumps < 2) {
         this.setVelocityY(DOUBLE_JUMP_VEL);
         this.jumps = 2;
         Sfx.play('jump');
-        this.play('keung-jump', true);
+        this.play(`${this.tex}-jump`, true);
         this.scene.spawnDust(this.x, this.y);
       }
     }
 
     if (!this.onGround) {
       this.state = 'jump';
-      if (this.anims.currentAnim?.key !== 'keung-jump') this.play('keung-jump', true);
+      if (this.anims.currentAnim?.key !== `${this.tex}-jump`) this.play(`${this.tex}-jump`, true);
     }
   }
 
@@ -367,10 +371,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.facing = dir;
       this.setFlipX(dir < 0);
       this.setVelocityX(dir * WALK_SPEED * 0.5);
-      this.play('keung-walk', true);
+      this.play(`${this.tex}-walk`, true);
     } else {
       this.setVelocityX(0);
-      this.play('keung-idle', true);
+      this.play(`${this.tex}-idle`, true);
     }
   }
 
@@ -488,7 +492,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (def.aura) this.scene.spawnSpecialGlow(this);
 
-    this.play(`keung-${def.anim}`, true);
+    this.play(`${this.tex}-${def.anim}`, true);
   }
 
   progressAttack(time, delta) {
@@ -527,7 +531,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.moveT >= totalMs) {
       if (mv.weapon && this.weaponHitLanded) this.breakWeapon();
       this.setState_('idle');
-      this.play('keung-idle', true);
+      this.play(`${this.tex}-idle`, true);
     }
   }
 
@@ -636,7 +640,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.hurtUntil = time + mv.stun;
       this.invulnUntil = Math.max(this.invulnUntil, time + mv.stun + 500);
       this.setVelocityX(0);
-      this.play('keung-hurt', true);
+      this.play(`${this.tex}-hurt`, true);
       this.scene.popText(this.x, this.y - 100, '辣眼!!', '#ff5d4d', 14);
       return true;
     }
@@ -647,7 +651,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.restoreBody();
       this.setVelocity(dir * Math.abs(mv.knockback.x), mv.knockback.y || -380);
       this.onGround = false;
-      this.play('keung-fall', true);
+      this.play(`${this.tex}-fall`, true);
       this.invulnUntil = time + 400;
     } else {
       this.state = 'hurt';
@@ -657,7 +661,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       // Mercy invulnerability past the stagger so enemy gangs can't stun-lock.
       this.invulnUntil = Math.max(this.invulnUntil, time + 750);
       this.setVelocityX(dir * Math.abs(mv.knockback.x) * 0.6);
-      this.play('keung-hurt', true);
+      this.play(`${this.tex}-hurt`, true);
     }
     return true;
   }
@@ -671,7 +675,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     // always connects (the self-release is only a safety net).
     this.grabbedUntil = time + holdMs + 250;
     this.setVelocity(0, 0);
-    this.play('keung-hurt', true);
+    this.play(`${this.tex}-hurt`, true);
   }
 
   thrownBy(enemy, mv, time) {
@@ -701,7 +705,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.heldWeapon) this.clearWeapon();
     this.setVelocity(dir * 240, -420);
     this.onGround = false;
-    this.play('keung-fall', true);
+    this.play(`${this.tex}-fall`, true);
     Sfx.play('ko');
     this.scene.onPlayerDeath();
   }
@@ -714,7 +718,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0, 0);
     this.state = 'idle';
     this.invulnUntil = time + 2500;
-    this.play('keung-idle', true);
+    this.play(`${this.tex}-idle`, true);
     this.scene.game.events.emit('hud:hp', { hp: this.hp, max: this.maxHp });
   }
 

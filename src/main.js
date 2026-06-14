@@ -1,6 +1,7 @@
 import { GAME_W, GAME_H } from './constants.js';
 import BootScene from './scenes/BootScene.js';
 import MenuScene from './scenes/MenuScene.js';
+import CharSelectScene from './scenes/CharSelectScene.js';
 import PreludeScene from './scenes/PreludeScene.js';
 import StageIntroScene from './scenes/StageIntroScene.js';
 import GameScene from './scenes/GameScene.js';
@@ -30,8 +31,8 @@ const config = {
   input: {
     activePointers: 4, // multi-touch: d-pad + buttons simultaneously
   },
-  scene: [BootScene, MenuScene, PreludeScene, StageIntroScene, GameScene,
-    HUDScene, BossIntroScene, StoryScene, GameOverScene],
+  scene: [BootScene, MenuScene, CharSelectScene, PreludeScene, StageIntroScene,
+    GameScene, HUDScene, BossIntroScene, StoryScene, GameOverScene],
 };
 
 window.addEventListener('load', () => {

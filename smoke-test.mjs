@@ -22,9 +22,19 @@ console.log('boot:', JSON.stringify(await page.evaluate(() => ({
   anims: window.__game.anims.anims.size,
 }))));
 
+// --- Character select (龍仔 Dragon vs 小美 Amy) ---
+await page.keyboard.press('z'); // Menu → CharSelect
+await page.waitForTimeout(700);
+const charsel = await page.evaluate(() => ({
+  scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
+  amyTex: window.__game.textures.exists('amy_idle'),
+  amyAnim: window.__game.anims.exists('amy-idle'),
+}));
+console.log('char select:', JSON.stringify(charsel));
+await page.keyboard.press('z'); // confirm 龍仔 Dragon (index 0) → Prelude
+await page.waitForTimeout(700);
+
 // --- Opening cutscene (prelude) ---
-await page.keyboard.press('z');
-await page.waitForTimeout(900);
 const prelude = await page.evaluate(() => ({
   scenes: window.__game.scene.scenes.filter((s) => s.scene.isActive()).map((s) => s.scene.key),
 }));
@@ -171,6 +181,20 @@ const end = await page.evaluate(() => ({
 }));
 console.log('after story:', JSON.stringify(end));
 await page.screenshot({ path: 'smoke-end.png' });
+
+// --- Verify the 小美 Amy skin renders in-game (cosmetic alt for Dragon) ---
+await page.evaluate(() => {
+  window.__game.registry.set('char', 'amy');
+  window.__game.scene.getScene('Game').scene.start('Game', { zoneIndex: 0, score: 0, lives: 3 });
+});
+await page.waitForTimeout(1200);
+const amy = await page.evaluate(() => {
+  const gs = window.__game.scene.getScene('Game');
+  return { playerSkin: gs.player.tex, playerTexture: gs.player.texture.key };
+});
+console.log('amy in-game:', JSON.stringify(amy));
+await page.screenshot({ path: 'smoke-amy.png' });
+if (amy.playerSkin !== 'amy') errors.push(`amy skin not applied: ${amy.playerSkin}`);
 
 if (errors.length) {
   console.log('\nERRORS:');

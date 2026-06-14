@@ -3,6 +3,7 @@
 
 import { GAME_W, GAME_H } from '../constants.js';
 import { WEAPONS } from '../data/weapons.js';
+import { charLabel } from '../data/characters.js';
 import HealthBar from '../ui/HealthBar.js';
 import SPBar from '../ui/SPBar.js';
 import ComboDisplay from '../ui/ComboDisplay.js';
@@ -15,7 +16,8 @@ export default class HUDScene extends Phaser.Scene {
   }
 
   create() {
-    this.hpBar = new HealthBar(this, 20, 34, 240, 18, { label: '龍仔 DRAGON' });
+    const label = charLabel(this.registry.get('char') || 'keung');
+    this.hpBar = new HealthBar(this, 20, 34, 240, 18, { label });
     this.spBar = new SPBar(this, 20, 58);
     this.livesText = this.add.text(20, 76, '', {
       fontFamily: 'monospace', fontSize: '14px', color: '#ff8a65', fontStyle: 'bold',

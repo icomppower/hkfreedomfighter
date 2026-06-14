@@ -43,7 +43,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.buildBackground();
 
-    this.player = new Player(this, 120);
+    this.player = new Player(this, 120, { char: this.registry.get('char') || 'keung' });
     this.enemies = this.add.group();
     this.items = this.add.group();
     this.weapons = this.add.group();
