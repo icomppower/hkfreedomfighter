@@ -140,6 +140,21 @@ export function drawFighter(ctx, p, pal) {
   limbSeg(ctx, hx + 1, hy, p.ff[0], p.ff[1], -3, 5, pal.pants);
   ctx.fillStyle = pal.shoes;
   ctx.fillRect(p.ff[0] - 3, p.ff[1] - 2, 7, 3.5);
+  // Flared dress / skirt (小美 Amy, Jan-style): an A-line from the waist over
+  // the upper legs. Drawn after the legs so it sits in front of them; pinned
+  // to the hip so it follows the body through every pose.
+  if (pal.skirt) {
+    ctx.fillStyle = pal.skirt;
+    ctx.beginPath();
+    ctx.moveTo(hx - 4.5, hy - 7);
+    ctx.lineTo(hx + 4.5, hy - 7);
+    ctx.lineTo(hx + 9.5, hy + 13);
+    ctx.lineTo(hx - 9.5, hy + 13);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = pal.skirtHem || pal.skirt;
+    ctx.fillRect(hx - 9.5, hy + 11, 19, 2.6);
+  }
   // head + hair + eye
   ctx.fillStyle = pal.skin;
   ctx.beginPath();

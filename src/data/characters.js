@@ -6,7 +6,7 @@
 
 export const CHARACTERS = [
   { key: 'keung', zh: '龍仔', en: 'DRAGON', blurb: '前線勇士 · 黑衣黃帽' },
-  { key: 'amy', zh: '小美', en: 'AMY', blurb: '前線記者 · 白盔 PRESS' },
+  { key: 'amy', zh: '小美', en: 'AMY', blurb: '粉紅戰裙 · 馬尾飄逸' },
 ];
 
 export function charLabel(key) {

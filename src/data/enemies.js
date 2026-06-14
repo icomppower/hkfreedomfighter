@@ -13,15 +13,16 @@ export const PALETTES = {
     skin: '#f1c27d', hair: '#ffd700', belt: '#ffd700', band: '#111111',
     mask: true, aura: 'rgba(255,215,0,0.95)',
   },
-  // 小美 Amy — front-line press: black vest, white helmet, yellow PRESS badge,
-  // slung camera. Bare-armed (sleeves tinted to skin). Cosmetic alt for Dragon;
-  // not an enemy (no ENEMIES entry) — this palette only feeds the sprite gen.
+  // 小美 Amy — Jan-style (LF2): pink flared dress, blonde ponytail, slim build,
+  // bare arms and legs. Cosmetic alt for Dragon; not an enemy (no ENEMIES
+  // entry) — this palette only feeds the sprite generator.
   amy: {
-    jacket: '#161616', sleeve: '#f1c27d', sleeveDark: '#d9a066',
-    pants: '#242424', pantsDark: '#121212', shoes: '#3a3a3a',
-    skin: '#f1c27d', hair: '#f5f5f5', bulk: 9,
-    ponytail: '#2a1a0a', press: '#ffd700', camera: true,
-    aura: 'rgba(255,215,0,0.95)',
+    jacket: '#f48fb1', sleeve: '#f1c27d', sleeveDark: '#d9a066',
+    pants: '#f1c27d', pantsDark: '#d9a066', shoes: '#ffffff',
+    skin: '#f1c27d', hair: '#ffe08a', bulk: 8,
+    belt: '#ec407a', ponytail: '#e0a82e',
+    skirt: '#f48fb1', skirtHem: '#ec407a',
+    aura: 'rgba(244,143,177,0.95)',
   },
   // 白衫友 White Shirt
   goon: {
